@@ -1,38 +1,39 @@
 import sys
 import pygame
 
-from settings import Settings
+from screens.settings import Settings
 
 """
+Pause menu for game
+runs when escape is pressed
+will show 3 buttons
 main menu
-will include buttons for :
-exit game
-start game
-enter settings
+settings
+quit
 """
 
 
-# Class for main menu
-class Menu:
+# Class for pause menu
+class Pause:
     # Init
-    def __init__(self, screen) -> None:
+    def __init__(self, screen, game) -> None:
         self.screen = screen
-        self.start = False
+        self.game = game
         self.settings = False
         self.settings_obj = Settings(screen, self)
 
     # Updates then renders
     def update(self):
+        self.draw_options()
         self.check_input()
-        self.draw_menu()
 
-    # Main render function
-    def draw_menu(self):
-        self.screen.fill("yellow")
-        pygame.draw.circle(self.screen, "black", (50,50), 40)
+    # Main draw function
+    def draw_options(self):
+        self.screen.fill("red")
+        pygame.draw.circle(self.screen, "purple", (50,50), 40)
         pygame.display.flip()
 
-    # Checks for events/input from user
+    # Checks for events/inputs from user
     def check_input(self):
         events = pygame.event.get()
         # Loops over events
@@ -44,13 +45,13 @@ class Menu:
 
             # Pressed a key
             if event.type == pygame.KEYDOWN:
-                # Exits the program
+                # Exits pause menu
                 if event.key == pygame.K_ESCAPE:
-                    pygame.quit() 
-                    sys.exit()
-                # Starts game
-                if event.key == pygame.K_p:
-                    self.start = True
+                    self.game.pause = False
+
                 # Opens settings
                 if event.key == pygame.K_s:
                     self.settings = True
+                    # Settings loop
+                    while self.settings:
+                        self.settings_obj.update()

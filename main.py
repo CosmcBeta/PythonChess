@@ -1,8 +1,8 @@
 import pygame
 
-from menu import Menu
-from game import Game
-from end_screen import EndScreen
+from screens.menu import Menu
+from screens.game import Game
+from screens.end_screen import EndScreen
 
 
 # Main function

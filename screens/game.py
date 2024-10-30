@@ -1,7 +1,7 @@
 import sys
 import pygame
 
-from pause import Pause
+from screens.pause import Pause
 
 """
 Main game loop
