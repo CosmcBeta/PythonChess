@@ -1,27 +1,54 @@
-# Example file showing a basic pygame "game loop"
 import pygame
 
-# pygame setup
-pygame.init()
-screen = pygame.display.set_mode((1280, 720))
-clock = pygame.time.Clock()
-running = True
+from menu import Menu
+from game import Game
+from end_screen import EndScreen
 
-while running:
-    # poll for events
-    # pygame.QUIT event means the user clicked X to close your window
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
 
-    # fill the screen with a color to wipe away anything from last frame
-    screen.fill("purple")
+# Main function
+def main():
+    # Init pygame and setup variables and screen
+    pygame.init()
+    window_size = 1280, 720
+    max_frame_rate = 60
+    screen = pygame.display.set_mode(window_size)
+    end_screen = EndScreen(screen) # Here to make sure no errors
 
-    # RENDER YOUR GAME HERE
+    # Main loop for gameplay
+    while True:
+        # Create objects
+        game = Game(screen)
+        menu = Menu(screen)
 
-    # flip() the display to put your work on screen
-    pygame.display.flip()
+        # Menu updating
+        while not menu.start and not end_screen.restart:
+            if menu.settings:
+                menu.settings_obj.update()
+            else:
+                menu.update()
 
-    clock.tick(60)  # limits FPS to 60
+        # Create clock
+        clock = pygame.time.Clock()
 
-pygame.quit()
+        # Game loop
+        while not game.game_over:
+            if game.pause:
+                game.pause_obj.update()
+            else:
+                game.update()
+            
+            # Update display and tick the clock
+            pygame.display.update()
+            clock.tick(max_frame_rate)
+        
+        # Create end screen object
+        end_screen = EndScreen(screen)
+
+        # Game over screen loop
+        while not end_screen.exit_end_screen:
+            end_screen.update()
+
+
+
+if __name__ == '__main__':
+    main()
