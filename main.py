@@ -9,7 +9,7 @@ from screens.end_screen import EndScreen
 def main():
     # Init pygame and setup variables and screen
     pygame.init()
-    window_size = 1280, 720
+    window_size = 640, 640
     max_frame_rate = 60
     screen = pygame.display.set_mode(window_size)
     end_screen = EndScreen(screen) # Here to make sure no errors
