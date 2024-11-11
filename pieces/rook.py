@@ -11,4 +11,14 @@ class Rook(Piece):
         self.texture = pygame.transform.scale(texture, (80, 80))
 
     def generate_moves(self):
-        pass
+        moves = [[0 for _ in range(8)] for _ in range(8)]
+
+        rank = self.location[1] # Row
+        file = self.location[0] # Column
+
+        for i in range(8):
+            moves[i][file] = 1
+            moves[rank][i] = 1
+
+        moves[rank][file] = 0
+        return moves

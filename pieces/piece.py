@@ -4,6 +4,10 @@ import pygame
 
 
 SQUARE_SIZE = 80
+FIRST = 0
+LAST = 7
+
+
 
 class Team(Enum):
     WHITE = 0

@@ -30,16 +30,16 @@ class Board:
         self.board = [[None for _ in range(8)] for _ in range(8)]
     
         self.board[0] = [
-            Rook(Team.WHITE, (0, 0)), Knight(Team.WHITE, (1, 0)), Bishop(Team.WHITE, (2, 0)), Queen(Team.WHITE, (3, 0)),
-            King(Team.WHITE, (4, 0)), Bishop(Team.WHITE, (5, 0)), Knight(Team.WHITE, (6, 0)), Rook(Team.WHITE, (7, 0))
+            Rook(Team.BLACK, (0, 0)), Knight(Team.BLACK, (1, 0)), Bishop(Team.BLACK, (2, 0)), Queen(Team.BLACK, (3, 0)),
+            King(Team.BLACK, (4, 0)), Bishop(Team.BLACK, (5, 0)), Knight(Team.BLACK, (6, 0)), Rook(Team.BLACK, (7, 0))
         ]
-        self.board[1] = [Pawn(Team.WHITE, (i, 1)) for i in range(8)]
+        self.board[1] = [Pawn(Team.BLACK, (i, 1)) for i in range(8)]
         
         self.board[7] = [
-            Rook(Team.BLACK, (0, 7)), Knight(Team.BLACK, (1, 7)), Bishop(Team.BLACK, (2, 7)), Queen(Team.BLACK, (3, 7)),
-            King(Team.BLACK, (4, 7)), Bishop(Team.BLACK, (5, 7)), Knight(Team.BLACK, (6, 7)), Rook(Team.BLACK, (7, 7))
+            Rook(Team.WHITE, (0, 7)), Knight(Team.WHITE, (1, 7)), Bishop(Team.WHITE, (2, 7)), Queen(Team.WHITE, (3, 7)),
+            King(Team.WHITE, (4, 7)), Bishop(Team.WHITE, (5, 7)), Knight(Team.WHITE, (6, 7)), Rook(Team.WHITE, (7, 7))
         ]
-        self.board[6] = [Pawn(Team.BLACK, (i, 6)) for i in range(8)]
+        self.board[6] = [Pawn(Team.WHITE, (i, 6)) for i in range(8)]
 
 
     def draw_pieces(self):
