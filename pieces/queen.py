@@ -10,48 +10,49 @@ class Queen(Piece):
         texture = pygame.image.load(png).convert()
         self.texture = pygame.transform.scale(texture, (80, 80))
 
-    def generate_moves(self):
+    def generate_moves(self, board):
         moves = [[0 for _ in range(8)] for _ in range(8)]
 
         rank = self.location[1] # Row
         file = self.location[0] # Column
 
-        # Horrizontal and vertical moves
-        for i in range(8):
-            moves[i][file] = 1
-            moves[rank][i] = 1
+        directions = [
+            (-1, 0), # Up
+            (0, -1), # Left
+            (1, 0), # Down
+            (0, 1), # Right
+            (-1, -1), # Up Left
+            (-1, 1), # Up Right
+            (1, -1), # Down Left
+            (1, 1) # Down Right
+        ]
 
-        # Diagonal moves
-        # Finds starting rank and file for top left diagonal moves
-        temp = rank - file
-        top_rank = temp if temp > FIRST else FIRST
-        top_file = FIRST if temp > FIRST else abs(temp)
+        positions = {dir: (rank, file) for dir in directions}
 
-        # Finds starting rank and file for bottom left diagonal moves
-        temp = rank + file
-        bottom_rank = temp if temp < LAST else LAST
-        bottom_file = FIRST if temp < LAST else temp - LAST
-
-        # Finds the moves for the diagonals
-        top = bottom = True
         while True:
-            if top:
-                moves[top_rank][top_file] = 1
-                top_rank += 1
-                top_file += 1
-            if bottom:
-                moves[bottom_rank][bottom_file] = 1
-                bottom_rank -= 1
-                bottom_file += 1
+            for dir, (r, f) in positions.items():
+                dr, df = dir
+                
+                if r == -1 or f == -1:
+                    continue
 
-            if top_rank > LAST or top_file > LAST:
-                top = False
+                r += dr
+                f += df
 
-            if bottom_rank < FIRST or bottom_file > LAST:
-                bottom = False
+                if r < FIRST or r > LAST or f < FIRST or f > LAST:
+                    positions[dir] = (-1, -1)
+                    continue
 
-            if not top and not bottom:
+                if board[r][f] is None:
+                    moves[r][f] = 1
+                    positions[dir] = (r, f)
+                elif board[r][f].team != self.team:
+                    moves[r][f] = 1
+                    positions[dir] = (-1, -1)
+                else:
+                    positions[dir] = (-1, -1)
+            
+            if all(pos == (-1, -1) for pos in positions.values()):
                 break
 
-        moves[rank][file] = 0
         return moves

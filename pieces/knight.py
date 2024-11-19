@@ -10,7 +10,7 @@ class Knight(Piece):
         texture = pygame.image.load(png).convert()
         self.texture = pygame.transform.scale(texture, (80, 80))
 
-    def generate_moves(self):
+    def generate_moves(self, board):
         moves = [[0 for _ in range(8)] for _ in range(8)]
 
         rank = self.location[1] # Row
@@ -25,6 +25,10 @@ class Knight(Piece):
             file_pos = file + possible_moves_file[i]
             if rank_pos > LAST or rank_pos < FIRST or file_pos > LAST or file_pos < FIRST:
                 continue
-            moves[rank_pos][file_pos] = 1
+            
+            if board[rank_pos][file_pos] is None:
+                moves[rank_pos][file_pos] = 1
+            elif board[rank_pos][file_pos].team != self.team:
+                moves[rank_pos][file_pos] = 1
 
         return moves

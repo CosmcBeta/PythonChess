@@ -12,7 +12,6 @@ LIGHT_BROWN = 236, 236, 208, 255
 DARK_BROWN = 181, 136, 95, 255
 # redHighlight(243, 60, 66, 255),
 # 	yellowHighlight(246, 246, 129, 255),
-# 	grayCircle(140, 140, 140, 160),
 # 	textHighlight(143, 107, 74, 255),
 
 
@@ -31,6 +30,8 @@ class Game:
         self.game_over = False
         self.pause = False
         self.moves = None
+        self.piece_selected = False
+        self.previous_pos = (0, 0)
         self.pause_obj = Pause(screen, self)
         self.board = Board()
         self.create_background_board()
@@ -42,7 +43,6 @@ class Game:
 
     # Main render function
     def draw_game(self):
-        self.screen.fill("purple")
         self.screen.blit(self.background_board, self.background_board.get_rect())
         pieces = self.board.draw_pieces()
         self.screen.blit(pieces, pieces.get_rect())
@@ -86,11 +86,22 @@ class Game:
 
                 pos = pos[0] // 80, pos[1] // 80
 
-                # If mouse is at the very corner of screen
+                # If mouse is at the very edge of screen
                 if pos[0] == 8:
                     pos = 7, pos[1]
 
                 if pos[1] == 8:
                     pos = pos[0], 7
 
-                self.moves = self.board.select_piece(pos)
+                piece_moved = False
+                if self.piece_selected:
+                    piece_moved = self.board.piece_selected(pos) # Bool if the piece moves or just selects a different square; true if moves, false if stays
+
+                if piece_moved:
+                    self.moves = None
+                    self.board.move_piece(pos, self.previous_pos)
+                else:
+                    self.moves = self.board.piece_moves(pos)
+                
+                self.piece_selected = True if self.moves is not None else False
+                self.previous_pos = pos

@@ -2,7 +2,10 @@ from abc import ABC, abstractmethod
 from enum import Enum
 import pygame
 
+"""
+merge rook, bishop, queen into sliding piece class
 
+"""
 SQUARE_SIZE = 80
 FIRST = 0
 LAST = 7
@@ -33,5 +36,5 @@ class Piece(ABC):
         return f'Team: {self.team}, Pos: {self.location}'
  
     @abstractmethod
-    def generate_moves(self):
+    def generate_moves(self, board):
         pass

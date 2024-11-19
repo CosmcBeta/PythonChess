@@ -56,7 +56,7 @@ class Board:
         return display
     
     # Display moves for current selected piece
-    def select_piece(self, pos):
+    def piece_moves(self, pos):
         display = pygame.Surface(SCREEN_SIZE, pygame.SRCALPHA)
         display.fill((0,0,0,0))
 
@@ -67,14 +67,34 @@ class Board:
         if self.board[rank][file] is None:
             return
 
-        moves = self.board[rank][file].generate_moves()
-        if moves is None:
+        self.moves = self.board[rank][file].generate_moves(self.board)
+        if self.moves is None:
             return
         
-        for y, column in enumerate(moves):
+        for y, column in enumerate(self.moves):
             for x, move in enumerate(column):
                 if move == 0:
                     continue
                 pygame.draw.circle(display, GRAY, (x*SQUARE_SIZE + 40, y*SQUARE_SIZE + 40), 40)
 
         return display
+    
+    def piece_selected(self, pos):
+        rank = pos[1]
+        file = pos[0]
+
+        return self.moves[rank][file] == 1
+    
+    def move_piece(self, new_pos, previous_pos):
+        new_rank = new_pos[1]
+        new_file = new_pos[0]
+
+        previous_rank = previous_pos[1]
+        previous_file = previous_pos[0]
+
+        self.board[new_rank][new_file] = self.board[previous_rank][previous_file]
+        self.board[new_rank][new_file].location = new_pos
+
+        if isinstance(self.board[new_rank][new_file], Pawn):
+            self.board[new_rank][new_file].first_move = False
+        self.board[previous_rank][previous_file] = None
