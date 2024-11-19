@@ -1,14 +1,32 @@
 import pygame
 
-from pieces.piece import Piece, Team, FIRST, LAST
+from pieces.piece import Piece, Type, FIRST, LAST
 
-class Queen(Piece):
-    def __init__(self, team, location) -> None:
-        super().__init__(team, location)
 
-        png = "assets/black_queen.png" if team == Team.BLACK else "assets/white_queen.png"
-        texture = pygame.image.load(png).convert()
-        self.texture = pygame.transform.scale(texture, (80, 80))
+DIRECTIONS = [
+    (-1, 0), # Up
+    (0, -1), # Left
+    (1, 0), # Down
+    (0, 1), # Right
+    (-1, -1), # Up Left
+    (-1, 1), # Up Right
+    (1, -1), # Down Left
+    (1, 1) # Down Right
+]
+
+
+class Sliding(Piece):
+    def __init__(self, team, type, location) -> None:
+        super().__init__(team, type, location)
+
+        if self.type == Type.ROOK:
+            self.directions = DIRECTIONS[:4]
+        elif self.type == Type.BISHOP:
+            self.directions = DIRECTIONS[-4:]
+        elif self.type == Type.QUEEN:
+            self.directions = DIRECTIONS
+        else:
+            self.directions = [(0, 0)]
 
     def generate_moves(self, board):
         moves = [[0 for _ in range(8)] for _ in range(8)]
@@ -16,28 +34,15 @@ class Queen(Piece):
         rank = self.location[1] # Row
         file = self.location[0] # Column
 
-        directions = [
-            (-1, 0), # Up
-            (0, -1), # Left
-            (1, 0), # Down
-            (0, 1), # Right
-            (-1, -1), # Up Left
-            (-1, 1), # Up Right
-            (1, -1), # Down Left
-            (1, 1) # Down Right
-        ]
-
-        positions = {dir: (rank, file) for dir in directions}
+        positions = {dir: (rank, file) for dir in self.directions}
 
         while True:
-            for dir, (r, f) in positions.items():
-                dr, df = dir
-                
+            for dir, (r, f) in positions.items():                
                 if r == -1 or f == -1:
                     continue
 
-                r += dr
-                f += df
+                r += dir[0]
+                f += dir[1]
 
                 if r < FIRST or r > LAST or f < FIRST or f > LAST:
                     positions[dir] = (-1, -1)

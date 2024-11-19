@@ -2,13 +2,10 @@ import pygame
 
 from pieces.piece import Piece, Team
 
+
 class King(Piece):
-    def __init__(self, team, location) -> None:
-        super().__init__(team, location)
-        
-        png = "assets/black_king.png" if team == Team.BLACK else "assets/white_king.png"
-        texture = pygame.image.load(png).convert()
-        self.texture = pygame.transform.scale(texture, (80, 80))
+    def __init__(self, team, type, location) -> None:
+        super().__init__(team, type, location)
 
     def generate_moves(self, board):
         moves = [[0 for _ in range(8)] for _ in range(8)]

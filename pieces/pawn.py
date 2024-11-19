@@ -2,14 +2,11 @@ import pygame
 
 from pieces.piece import Piece, Team, FIRST, LAST
 
+
 class Pawn(Piece):
-    def __init__(self, team, location) -> None:
-        super().__init__(team, location)
+    def __init__(self, team, type, location) -> None:
+        super().__init__(team, type, location)
         self.first_move = True
-        
-        png = "assets/black_pawn.png" if team == Team.BLACK else "assets/white_pawn.png"
-        texture = pygame.image.load(png).convert()
-        self.texture = pygame.transform.scale(texture, (80, 80))
 
     def generate_moves(self, board):
         moves = [[0 for _ in range(8)] for _ in range(8)]
@@ -30,13 +27,13 @@ class Pawn(Piece):
             moves[rank + (dir * 2)][file] = 1
 
         # Diagonals
-        if board[rank + dir][file + 1] is not None and board[rank + dir][file + 1].team != self.team:
+        if file + 1 <= LAST and board[rank + dir][file + 1] is not None and board[rank + dir][file + 1].team != self.team:
             moves[rank + dir][file + 1] = 1
 
-        if board[rank + dir][file - 1] is not None and board[rank + dir][file - 1].team != self.team:
+        if file - 1 >= FIRST and board[rank + dir][file - 1] is not None and board[rank + dir][file - 1].team != self.team:
             moves[rank + dir][file - 1] = 1
 
         # En Passant
-        
+
 
         return moves
