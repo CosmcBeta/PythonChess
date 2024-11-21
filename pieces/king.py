@@ -1,13 +1,13 @@
-import pygame
-
-from pieces.piece import Piece, Team
+from pieces.piece import Piece, Team, Type
 
 
+# King piece
 class King(Piece):
-    def __init__(self, team, type, location) -> None:
+    def __init__(self, team: Team, type: Type, location: tuple) -> None:
         super().__init__(team, type, location)
 
-    def generate_moves(self, board):
+    # King move generation
+    def generate_moves(self, board: list[list]) -> list[list]:
         moves = [[0 for _ in range(8)] for _ in range(8)]
 
         rank = self.location[1] # Row

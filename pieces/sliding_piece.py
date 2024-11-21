@@ -1,8 +1,6 @@
-import pygame
+from pieces.piece import Piece, Team, Type, FIRST, LAST
 
-from pieces.piece import Piece, Type, FIRST, LAST
-
-
+# Directions for adders
 DIRECTIONS = [
     (-1, 0), # Up
     (0, -1), # Left
@@ -15,10 +13,12 @@ DIRECTIONS = [
 ]
 
 
+# Queen, Rook, Bishop pieces
 class Sliding(Piece):
-    def __init__(self, team, type, location) -> None:
+    def __init__(self, team: Team, type: Type, location: tuple) -> None:
         super().__init__(team, type, location)
 
+        # Move directions needed for each piece
         if self.type == Type.ROOK:
             self.directions = DIRECTIONS[:4]
         elif self.type == Type.BISHOP:
@@ -28,16 +28,21 @@ class Sliding(Piece):
         else:
             self.directions = [(0, 0)]
 
-    def generate_moves(self, board):
+    # Queen, Rook, Bishop move generation
+    def generate_moves(self, board: list[list]) -> list[list]:
         moves = [[0 for _ in range(8)] for _ in range(8)]
 
         rank = self.location[1] # Row
         file = self.location[0] # Column
 
+        # Dictionary of positions; {direction: (rank, file)}
         positions = {dir: (rank, file) for dir in self.directions}
 
+        # Loops until all directions are complete
         while True:
+            # Loops over each position
             for dir, (r, f) in positions.items():                
+                # Set to -1 when complete
                 if r == -1 or f == -1:
                     continue
 
@@ -57,6 +62,7 @@ class Sliding(Piece):
                 else:
                     positions[dir] = (-1, -1)
             
+            # All directions are complete
             if all(pos == (-1, -1) for pos in positions.values()):
                 break
 

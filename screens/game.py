@@ -3,7 +3,7 @@ import pygame
 
 from screens.pause import Pause
 from logic.board import Board
-
+from pieces.piece import Team
 
 # Constants
 SQUARE_SIZE = 80
@@ -34,6 +34,7 @@ class Game:
         self.previous_pos = (0, 0)
         self.pause_obj = Pause(screen, self)
         self.board = Board()
+        #self.players_turn = self.board.players_turn
         self.create_background_board()
 
     # Updates then renders
@@ -92,16 +93,20 @@ class Game:
 
                 if pos[1] == 8:
                     pos = pos[0], 7
-
-                piece_moved = False
+                
+                # Determines whether piece is moving or selecting a different piece
+                move_piece = False 
                 if self.piece_selected:
-                    piece_moved = self.board.piece_selected(pos) # Bool if the piece moves or just selects a different square; true if moves, false if stays
+                    move_piece = self.board.is_move(pos)
 
-                if piece_moved:
+                # Moves the piece selected
+                if move_piece:
                     self.moves = None
                     self.board.move_piece(pos, self.previous_pos)
-                else:
+                    self.board.players_turn = Team.BLACK if self.board.players_turn == Team.WHITE else Team.WHITE
+                else: # Selects next pieces moves
                     self.moves = self.board.piece_moves(pos)
                 
+                # Determines if new piece is selected or not
                 self.piece_selected = True if self.moves is not None else False
                 self.previous_pos = pos
