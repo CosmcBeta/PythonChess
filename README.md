@@ -3,9 +3,10 @@ A game of chess created with python and pygame
 
 ## Need to do:
 - Add En Passant
-- Comment Code
+- Add castling
+- Create endings
+- Check/Checkmate
 - Create moves for when in check
-- Add FEN string converter
 - Create actual menus
 - Change controls from keyboard to mouse
 
