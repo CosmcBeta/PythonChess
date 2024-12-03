@@ -5,7 +5,6 @@ from pieces.piece import Piece, Team, Type, FIRST, LAST
 class Pawn(Piece):
     def __init__(self, team: Team, type: Type, location: tuple) -> None:
         super().__init__(team, type, location)
-        self.first_move = True
 
     # Pawn move generation
     def generate_moves(self, board: list[list]) -> list[list]:

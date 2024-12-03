@@ -3,7 +3,7 @@ A game of chess created with python and pygame
 
 ## Need to do:
 - Add En Passant
-- Add castling
+- Add castling - make rook move
 - Create endings
 - Check/Checkmate
 - Create moves for when in check

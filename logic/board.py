@@ -1,6 +1,6 @@
 import pygame
 
-from pieces.piece import Team, Type, LAST, SQUARE_SIZE
+from pieces.piece import Team, Type, Move, LAST, SQUARE_SIZE
 from pieces.king import King
 from pieces.knight import Knight
 from pieces.pawn import Pawn
@@ -30,7 +30,7 @@ GRAY = 140, 140, 140, 160
 class Board:
     # Creates the board
     def __init__(self) -> None:
-        self.fen_to_board() #"r1bk3r/p2pBpNp/n4n2/1p1NP2P/6P1/3P4/P1P1K3/q5b1")
+        self.fen_to_board("r2qk2r/8/8/8/8/8/8/R2QK2R w KQkq - 0 1") #"r1bk3r/p2pBpNp/n4n2/1p1NP2P/6P1/3P4/P1P1K3/q5b1")
 
     # Creates board from the first arg of a FEN string
     def create_board(self, board: str) -> None:
@@ -106,15 +106,35 @@ class Board:
 
         # Castling
         # WIP
+        self.can_castle = [False for _ in range(4)]
+        if castle is None:
+            self.can_castle = [True for _ in range(4)]
+        else:
+            for char in castle:
+                if char == '-':
+                    break
+                elif char == 'K':
+                    self.can_castle[0] = True # White right
+                elif char == 'Q':
+                    self.can_castle[1] = True # White left
+                elif char == 'k':
+                    self.can_castle[2] = True # Black right
+                elif char == 'q':
+                    self.can_castle[3] = True # Black left
 
         # En Passant
         # WIP
+        if en_passant is None or en_passant == '-':
+            self.en_passant_square = None
+        else:
+            x = ord(en_passant[0]) - ord('a')
+            self.en_passant_square = (x, en_passant[1]) # (file, row)
 
         # Half Move
-        self.half_move = half_move if not None else 0
+        self.half_move = int(half_move) if not None else 0
 
         # Full Move
-        self.full_move = full_move if not None else 0
+        self.full_move = int(full_move) if not None else 0
         
     # Draws the pieces from the board to the surface; returns surface
     def draw_pieces(self) -> pygame.Surface:
@@ -156,18 +176,29 @@ class Board:
         # Goes thru each move and creates gray circle for each move
         for y, column in enumerate(self.moves):
             for x, move in enumerate(column):
-                if move == 0:
+                if move == Move.NONE:
                     continue
                 pygame.draw.circle(display, GRAY, (x*SQUARE_SIZE + 40, y*SQUARE_SIZE + 40), 40)
 
         return display
     
     # Returns whether the pos is in the selected pieces moves or not
-    def is_move(self, pos: tuple) -> bool:
+    def move_type(self, pos: tuple) -> Move:
         rank = pos[1]
         file = pos[0]
 
-        return self.moves[rank][file] == 1
+        if self.moves[rank][file] == 1:
+            return Move.NORMAL
+        elif self.moves[rank][file] == 2:
+            return Move.LEFT_CASTLE
+        elif self.moves[rank][file] == 3:
+            return Move.RIGHT_CASTLE
+        elif self.moves[rank][file] == 4:
+            return Move.EN_PASSANT
+        else:
+            return Move.NONE
+
+        #return self.moves[rank][file] == 1
     
     # Moves a piece to new location
     def move_piece(self, new_pos: tuple, previous_pos: tuple) -> None:
@@ -181,8 +212,8 @@ class Board:
         self.board[new_rank][new_file] = self.board[previous_rank][previous_file]
         self.board[new_rank][new_file].location = new_pos
 
-        # If pawn no longer first move
-        if isinstance(self.board[new_rank][new_file], Pawn):
+        # No longer first move
+        if self.board[new_rank][new_file].first_move:
             self.board[new_rank][new_file].first_move = False
         
         # Sets old position to None

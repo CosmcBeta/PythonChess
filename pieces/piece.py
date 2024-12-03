@@ -19,6 +19,14 @@ class Type(Enum):
     KING = 5
 
 
+class Move(Enum):
+    NONE = 0
+    NORMAL = 1
+    LEFT_CASTLE = 2
+    RIGHT_CASTLE = 3
+    EN_PASSANT = 4
+
+
 # Constants
 SQUARE_SIZE = 80
 FIRST = 0
@@ -41,6 +49,7 @@ class Piece(ABC):
         self.team = team
         self.type = type
         self.location = location
+        self.first_move = True
         
         # Sets texture based on piece type
         png = PNGS[self.type][self.team.value]

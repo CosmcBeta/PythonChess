@@ -3,7 +3,7 @@ import pygame
 
 from screens.pause import Pause
 from logic.board import Board
-from pieces.piece import Team
+from pieces.piece import Team, Move, FIRST, LAST
 
 # Constants
 SQUARE_SIZE = 80
@@ -60,8 +60,6 @@ class Game:
                 if (x + y) % 2 == 0:
                     pygame.draw.rect(self.background_board, LIGHT_BROWN, (x*SQUARE_SIZE, y*SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE))
 
-
-
     # Checks for events/updates from user
     def check_input(self):
         events = pygame.event.get()
@@ -96,13 +94,37 @@ class Game:
                 
                 # Determines whether piece is moving or selecting a different piece
                 move_piece = False 
+                en_passant = False
+                left_castle = False
+                right_castle = False
                 if self.piece_selected:
-                    move_piece = self.board.is_move(pos)
+                    move = self.board.move_type(pos)
+                    move_piece = True if move != Move.NONE else False
+                    en_passant = True if move == Move.EN_PASSANT else False
+                    left_castle = True if move == Move.LEFT_CASTLE else False
+                    right_castle = True if move == Move.RIGHT_CASTLE else False
+
+                castle = True if left_castle or right_castle else False
+                    # if self.board.is_move(pos) != Move.NONE:
+                    #     move_piece = True
+                    
 
                 # Moves the piece selected
                 if move_piece:
                     self.moves = None
                     self.board.move_piece(pos, self.previous_pos)
+                    if castle:
+                        rank = pos[1]
+                        file = pos[0]
+                        if left_castle:
+                            rook_pos = (FIRST, rank)
+                            new_pos = (FIRST + 3, rank)
+                        if right_castle:
+                            rook_pos = (LAST, rank)
+                            new_pos = (LAST - 2, rank)
+                        self.board.move_piece(new_pos, rook_pos)
+
+
                     self.board.players_turn = Team.BLACK if self.board.players_turn == Team.WHITE else Team.WHITE
                 else: # Selects next pieces moves
                     self.moves = self.board.piece_moves(pos)
