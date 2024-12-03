@@ -1,4 +1,4 @@
-from pieces.piece import Piece, Team, Type, FIRST, LAST
+from pieces.piece import Piece, Team, Type, Move, FIRST, LAST
 
 
 # Pawn piece
@@ -8,7 +8,7 @@ class Pawn(Piece):
 
     # Pawn move generation
     def generate_moves(self, board: list[list]) -> list[list]:
-        moves = [[0 for _ in range(8)] for _ in range(8)]
+        moves = [[Move.NONE for _ in range(8)] for _ in range(8)]
 
         rank = self.location[1] # Row
         file = self.location[0] # Column
@@ -22,17 +22,17 @@ class Pawn(Piece):
 
         # Forwards
         if board[rank + dir][file] is None:
-            moves[rank + dir][file] = 1
+            moves[rank + dir][file] = Move.NORMAL
 
         if self.first_move and board[rank + (dir * 2)][file] is None:
-            moves[rank + (dir * 2)][file] = 1
+            moves[rank + (dir * 2)][file] = Move.NORMAL
 
         # Diagonals
         if file + 1 <= LAST and board[rank + dir][file + 1] is not None and board[rank + dir][file + 1].team != self.team:
-            moves[rank + dir][file + 1] = 1
+            moves[rank + dir][file + 1] = Move.NORMAL
 
         if file - 1 >= FIRST and board[rank + dir][file - 1] is not None and board[rank + dir][file - 1].team != self.team:
-            moves[rank + dir][file - 1] = 1
+            moves[rank + dir][file - 1] = Move.NORMAL
 
         # En Passant
         # Rules:

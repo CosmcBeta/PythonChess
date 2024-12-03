@@ -115,7 +115,6 @@ class Game:
                     self.board.move_piece(pos, self.previous_pos)
                     if castle:
                         rank = pos[1]
-                        file = pos[0]
                         if left_castle:
                             rook_pos = (FIRST, rank)
                             new_pos = (FIRST + 3, rank)

@@ -1,4 +1,4 @@
-from pieces.piece import Piece, Team, Type, FIRST, LAST
+from pieces.piece import Piece, Team, Type, Move, FIRST, LAST
 
 
 # Knight piece
@@ -8,7 +8,7 @@ class Knight(Piece):
 
     # Knight move generation
     def generate_moves(self, board: list[list]) -> list[list]:
-        moves = [[0 for _ in range(8)] for _ in range(8)]
+        moves = [[Move.NONE for _ in range(8)] for _ in range(8)]
 
         rank = self.location[1] # Row
         file = self.location[0] # Column
@@ -21,13 +21,13 @@ class Knight(Piece):
         for i in range(possible_moves):
             rank_pos = rank + possible_moves_rank[i]
             file_pos = file + possible_moves_file[i]
-            
+
             if rank_pos > LAST or rank_pos < FIRST or file_pos > LAST or file_pos < FIRST:
                 continue
             
             if board[rank_pos][file_pos] is None:
-                moves[rank_pos][file_pos] = 1
+                moves[rank_pos][file_pos] = Move.NORMAL
             elif board[rank_pos][file_pos].team != self.team:
-                moves[rank_pos][file_pos] = 1
+                moves[rank_pos][file_pos] = Move.NORMAL
 
         return moves

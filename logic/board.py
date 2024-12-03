@@ -187,6 +187,8 @@ class Board:
         rank = pos[1]
         file = pos[0]
 
+        return self.moves[rank][file]
+
         if self.moves[rank][file] == 1:
             return Move.NORMAL
         elif self.moves[rank][file] == 2:

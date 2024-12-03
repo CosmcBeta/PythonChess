@@ -8,7 +8,7 @@ class King(Piece):
 
     # King move generation
     def generate_moves(self, board: list[list]) -> list[list]:
-        moves = [[0 for _ in range(8)] for _ in range(8)]
+        moves = [[Move.NONE for _ in range(8)] for _ in range(8)]
 
         rank = self.location[1] # Row
         file = self.location[0] # Column
@@ -17,9 +17,9 @@ class King(Piece):
         for i in range(max(0, rank - 1), min(8, rank + 2)):
             for j in range(max(0, file - 1), min(8, file + 2)):
                 if board[i][j] is None:
-                    moves[i][j] = 1
+                    moves[i][j] = Move.NORMAL
                 elif board[i][j].team != self.team:
-                    moves[i][j] = 1
+                    moves[i][j] = Move.NORMAL
 
         # Castling
         if self.first_move:
@@ -29,7 +29,7 @@ class King(Piece):
             if self.check_castle(rank, LAST, board, [-1, -2]):
                  moves[rank][LAST - 1] = Move.RIGHT_CASTLE
 
-        moves[rank][file] = 0
+        moves[rank][file] = Move.NONE
         return moves
 
     # Checks if it's possible to castle

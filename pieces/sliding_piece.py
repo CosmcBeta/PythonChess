@@ -1,4 +1,4 @@
-from pieces.piece import Piece, Team, Type, FIRST, LAST
+from pieces.piece import Piece, Team, Type, Move, FIRST, LAST
 
 # Directions for adders
 DIRECTIONS = [
@@ -30,7 +30,7 @@ class Sliding(Piece):
 
     # Queen, Rook, Bishop move generation
     def generate_moves(self, board: list[list]) -> list[list]:
-        moves = [[0 for _ in range(8)] for _ in range(8)]
+        moves = [[Move.NONE for _ in range(8)] for _ in range(8)]
 
         rank = self.location[1] # Row
         file = self.location[0] # Column
@@ -54,10 +54,10 @@ class Sliding(Piece):
                     continue
 
                 if board[r][f] is None:
-                    moves[r][f] = 1
+                    moves[r][f] = Move.NORMAL
                     positions[dir] = (r, f)
                 elif board[r][f].team != self.team:
-                    moves[r][f] = 1
+                    moves[r][f] = Move.NORMAL
                     positions[dir] = (-1, -1)
                 else:
                     positions[dir] = (-1, -1)
