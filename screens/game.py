@@ -113,9 +113,8 @@ class Game:
                     
                     if move == Move.EN_PASSANT:
                         if self.board.players_turn == Team.WHITE:
-                            new_pos = (pos[0] + 1, pos[1])
                             self.board.remove_piece((pos[0], pos[1] + 1))
-                        if self.board.players_turn == Team.BLACK:
+                        elif self.board.players_turn == Team.BLACK:
                             self.board.remove_piece((pos[0], pos[1] - 1))
 
 

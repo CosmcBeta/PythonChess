@@ -18,46 +18,41 @@ class Pawn(Piece):
             return
 
         # Direction of moves
-        dir = -1 if self.team == Team.WHITE else 1
+        if self.team == Team.WHITE:
+            dir = -1
+            target_rank = 3
+            opponent_start_rank = rank - 2
+        else:
+            dir = 1
+            target_rank = 4
+            opponent_start_rank = rank + 2
+
+        dir_rank = rank + dir
 
         # Forwards
-        if board[rank + dir][file] is None:
-            moves[rank + dir][file] = Move.NORMAL
+        if board[dir_rank][file] is None:
+            moves[dir_rank][file] = Move.NORMAL
 
         if self.first_move and board[rank + (dir * 2)][file] is None:
             moves[rank + (dir * 2)][file] = Move.PAWN_DOUBLE
 
         # Diagonals
-        if file + 1 <= LAST and board[rank + dir][file + 1] is not None and board[rank + dir][file + 1].team != self.team:
-            moves[rank + dir][file + 1] = Move.NORMAL
+        for offset in [-1, 1]:
+            adjacent_file = file + offset
+            if FIRST <= adjacent_file <= LAST and board[dir_rank][adjacent_file] is not None and board[dir_rank][adjacent_file].team != self.team:
+                moves[dir_rank][adjacent_file] = Move.NORMAL
 
-        if file - 1 >= FIRST and board[rank + dir][file - 1] is not None and board[rank + dir][file - 1].team != self.team:
-            moves[rank + dir][file - 1] = Move.NORMAL
-
-        # En Passant        
-        if previous_move == Move.PAWN_DOUBLE: # Previous move was a double pawn move
-            # White En Passant
-            if self.team == Team.WHITE: # Team
-                if rank == 3: # Pawn is in the right row
-                    if file + 1 <= LAST: # Right boundry
-                        if board[rank][file + 1] != previous_board[rank][file + 1]: # Check if the piece next to it is the same before and after the previous move
-                            if previous_board[rank - 2][file + 1] is not None and previous_board[rank - 2][file + 1].type == Type.PAWN: # Makes sure it was this pawn that moved double
-                                moves[rank - 1][file + 1] = Move.EN_PASSANT
-                    if file - 1 >= FIRST: # Left boundry
-                        if board[rank][file - 1] != previous_board[rank][file - 1]:
-                            if previous_board[rank - 2][file - 1] is not None and previous_board[rank - 2][file - 1].type == Type.PAWN:
-                                moves[rank - 1][file - 1] = Move.EN_PASSANT
-            # Black En Passant
-            if self.team == Team.BLACK:
-                if rank == 4:
-                    if file + 1 <= LAST: # Right boundry
-                        if board[rank][file + 1] != previous_board[rank][file + 1]: # Check if the piece next to it is the same before and after the previous move
-                            if previous_board[rank + 2][file + 1] is not None and previous_board[rank + 2][file + 1].type == Type.PAWN: # Makes sure it was this pawn that moved double
-                                moves[rank + 1][file + 1] = Move.EN_PASSANT
-                    if file - 1 >= FIRST: # Left boundry
-                        if board[rank][file - 1] != previous_board[rank][file - 1]:
-                            if previous_board[rank + 2][file - 1] is not None and previous_board[rank + 2][file - 1].type == Type.PAWN:
-                                moves[rank + 1][file - 1] = Move.EN_PASSANT
-
+        # En Passant
+        if previous_move == Move.PAWN_DOUBLE:
+            # Check if the pawn is on the correct rank for en passant
+            if rank == target_rank:
+                for offset in [-1, 1]:  # Check both left and right
+                    adjacent_file = file + offset
+                    # Check for boundry and the piece being moved to that location
+                    if FIRST <= adjacent_file <= LAST and board[rank][adjacent_file] != previous_board[rank][adjacent_file]:
+                        piece_to_check = previous_board[opponent_start_rank][adjacent_file]
+                        # Make sure this is the piece that En Passanted
+                        if piece_to_check is not None and piece_to_check.type == Type.PAWN:
+                            moves[rank + dir][adjacent_file] = Move.EN_PASSANT
 
         return moves

@@ -1,8 +1,7 @@
 # PythonChess
-A game of chess created with python and pygame
+A 2 player game of chess created with python and pygame
 
 ## Need to do:
-- Refactor code for En Passant
 - Add pawn promotion
 - Create endings
 - Check/Checkmate
