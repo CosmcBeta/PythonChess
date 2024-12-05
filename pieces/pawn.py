@@ -7,7 +7,7 @@ class Pawn(Piece):
         super().__init__(team, type, location)
 
     # Pawn move generation
-    def generate_moves(self, board: list[list]) -> list[list]:
+    def generate_moves(self, board: list[list], previous_board: list[list], previous_move: Move) -> list[list]:
         moves = [[Move.NONE for _ in range(8)] for _ in range(8)]
 
         rank = self.location[1] # Row
@@ -25,7 +25,7 @@ class Pawn(Piece):
             moves[rank + dir][file] = Move.NORMAL
 
         if self.first_move and board[rank + (dir * 2)][file] is None:
-            moves[rank + (dir * 2)][file] = Move.NORMAL
+            moves[rank + (dir * 2)][file] = Move.PAWN_DOUBLE
 
         # Diagonals
         if file + 1 <= LAST and board[rank + dir][file + 1] is not None and board[rank + dir][file + 1].team != self.team:
@@ -34,25 +34,30 @@ class Pawn(Piece):
         if file - 1 >= FIRST and board[rank + dir][file - 1] is not None and board[rank + dir][file - 1].team != self.team:
             moves[rank + dir][file - 1] = Move.NORMAL
 
-        # En Passant
-        # Rules:
-        # describes the capture by a pawn of an enemy pawn on the same rank and an adjacent 
-        # file that has just made an initial two-square advance.[2][3] This is a special case 
-        # in the rules of chess. The capturing pawn moves to the square that the enemy pawn passed over, 
-        # as if the enemy pawn had advanced only one square. The rule ensures that a pawn cannot use its 
-        # two-square move to safely skip past an enemy pawn.
-
-        # if self.team == Team.WHITE: # Team
-        #     if rank == 2: # 3rd row, one below black pawns
-        #         if file + 1 <= LAST: # boundry
-        #             if board[rank][file + 1] is not None: # Piece is actually there
-        #                 if board[rank][file + 1].type == Type.PAWN: # Is a pawn
-        #                     if board[rank][file + 1].team != self.team: # Not on my team
-        #                         if # Last move was this pawn moving 2 spaces to get here
-
-
-
-
+        # En Passant        
+        if previous_move == Move.PAWN_DOUBLE: # Previous move was a double pawn move
+            # White En Passant
+            if self.team == Team.WHITE: # Team
+                if rank == 3: # Pawn is in the right row
+                    if file + 1 <= LAST: # Right boundry
+                        if board[rank][file + 1] != previous_board[rank][file + 1]: # Check if the piece next to it is the same before and after the previous move
+                            if previous_board[rank - 2][file + 1] is not None and previous_board[rank - 2][file + 1].type == Type.PAWN: # Makes sure it was this pawn that moved double
+                                moves[rank - 1][file + 1] = Move.EN_PASSANT
+                    if file - 1 >= FIRST: # Left boundry
+                        if board[rank][file - 1] != previous_board[rank][file - 1]:
+                            if previous_board[rank - 2][file - 1] is not None and previous_board[rank - 2][file - 1].type == Type.PAWN:
+                                moves[rank - 1][file - 1] = Move.EN_PASSANT
+            # Black En Passant
+            if self.team == Team.BLACK:
+                if rank == 4:
+                    if file + 1 <= LAST: # Right boundry
+                        if board[rank][file + 1] != previous_board[rank][file + 1]: # Check if the piece next to it is the same before and after the previous move
+                            if previous_board[rank + 2][file + 1] is not None and previous_board[rank + 2][file + 1].type == Type.PAWN: # Makes sure it was this pawn that moved double
+                                moves[rank + 1][file + 1] = Move.EN_PASSANT
+                    if file - 1 >= FIRST: # Left boundry
+                        if board[rank][file - 1] != previous_board[rank][file - 1]:
+                            if previous_board[rank + 2][file - 1] is not None and previous_board[rank + 2][file - 1].type == Type.PAWN:
+                                moves[rank + 1][file - 1] = Move.EN_PASSANT
 
 
         return moves

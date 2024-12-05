@@ -20,11 +20,12 @@ class Type(Enum):
 
 
 class Move(Enum):
-    NONE = 0
+    NONE = 0    
     NORMAL = 1
     LEFT_CASTLE = 2
     RIGHT_CASTLE = 3
     EN_PASSANT = 4
+    PAWN_DOUBLE = 5
 
 
 # Constants
@@ -56,6 +57,18 @@ class Piece(ABC):
         texture = pygame.image.load(png).convert()
         self.texture = pygame.transform.scale(texture, (80, 80))
 
+    # Custom deep copy method to exclude 'texture'
+    def __deepcopy__(self, memo):
+        # Create a new instance of the piece without copying the 'texture' attribute
+        copied_obj = self.__class__(self.team, self.type, self.location)
+        
+        # Prevent recursion: register the copied object in the memo dictionary
+        memo[id(self)] = copied_obj
+        
+        # Copy simple attributes
+        copied_obj.first_move = self.first_move
+        return copied_obj
+
     # Returns location of the piece on the screen scale
     def get_location(self) -> tuple:
         return self.location[0] * SQUARE_SIZE, self.location[1] * SQUARE_SIZE
@@ -70,5 +83,5 @@ class Piece(ABC):
  
     # Abstract method for move generation
     @abstractmethod
-    def generate_moves(self, board: list[list]) -> list[list]:
+    def generate_moves(self, board: list[list], previous_board: list[list], previous_move: Move) -> list[list]:
         pass

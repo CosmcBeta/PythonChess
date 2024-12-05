@@ -29,7 +29,7 @@ class Sliding(Piece):
             self.directions = [(0, 0)]
 
     # Queen, Rook, Bishop move generation
-    def generate_moves(self, board: list[list]) -> list[list]:
+    def generate_moves(self, board: list[list], previous_board: list[list], previous_move: Move) -> list[list]:
         moves = [[Move.NONE for _ in range(8)] for _ in range(8)]
 
         rank = self.location[1] # Row

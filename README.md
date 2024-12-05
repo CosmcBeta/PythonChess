@@ -2,8 +2,8 @@
 A game of chess created with python and pygame
 
 ## Need to do:
-- Add En Passant
-- Add castling - make rook move
+- Refactor code for En Passant
+- Add pawn promotion
 - Create endings
 - Check/Checkmate
 - Create moves for when in check

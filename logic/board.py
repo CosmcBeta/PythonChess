@@ -1,10 +1,12 @@
 import pygame
+from copy import deepcopy
 
 from pieces.piece import Team, Type, Move, LAST, SQUARE_SIZE
 from pieces.king import King
 from pieces.knight import Knight
 from pieces.pawn import Pawn
 from pieces.sliding_piece import Sliding
+from logic.history import History
 
 """
     Board indexes
@@ -30,7 +32,8 @@ GRAY = 140, 140, 140, 160
 class Board:
     # Creates the board
     def __init__(self) -> None:
-        self.fen_to_board("r2qk2r/8/8/8/8/8/8/R2QK2R w KQkq - 0 1") #"r1bk3r/p2pBpNp/n4n2/1p1NP2P/6P1/3P4/P1P1K3/q5b1")
+        self.fen_to_board()#"r2qk2r/8/8/8/8/8/8/R2QK2R w KQkq - 0 1") #"r1bk3r/p2pBpNp/n4n2/1p1NP2P/6P1/3P4/P1P1K3/q5b1")
+        self.histroy = History()
 
     # Creates board from the first arg of a FEN string
     def create_board(self, board: str) -> None:
@@ -167,7 +170,7 @@ class Board:
             return
 
         # Generates Moves
-        self.moves = self.board[rank][file].generate_moves(self.board)
+        self.moves = self.board[rank][file].generate_moves(self.board, self.histroy.get_last_board(), self.histroy.get_last_move())
         
         # Skips if no moves found
         if self.moves is None:
@@ -182,28 +185,20 @@ class Board:
 
         return display
     
-    # Returns whether the pos is in the selected pieces moves or not
+    # Returns what kind of move the selected pos is
     def move_type(self, pos: tuple) -> Move:
         rank = pos[1]
         file = pos[0]
 
+        if self.moves is None:
+            return None
+
         return self.moves[rank][file]
-
-        if self.moves[rank][file] == 1:
-            return Move.NORMAL
-        elif self.moves[rank][file] == 2:
-            return Move.LEFT_CASTLE
-        elif self.moves[rank][file] == 3:
-            return Move.RIGHT_CASTLE
-        elif self.moves[rank][file] == 4:
-            return Move.EN_PASSANT
-        else:
-            return Move.NONE
-
-        #return self.moves[rank][file] == 1
     
     # Moves a piece to new location
-    def move_piece(self, new_pos: tuple, previous_pos: tuple) -> None:
+    def move_piece(self, new_pos: tuple, previous_pos: tuple, move: Move) -> None:
+        self.histroy.add_board(deepcopy(self.board), move)
+
         new_rank = new_pos[1]
         new_file = new_pos[0]
 
@@ -224,3 +219,9 @@ class Board:
         # Increments full move after each black move
         if self.players_turn == Team.BLACK:
             self.full_move += 1
+
+    def remove_piece(self, pos: tuple) -> None:
+        rank = pos[1]
+        file = pos[0]
+
+        self.board[rank][file] = None

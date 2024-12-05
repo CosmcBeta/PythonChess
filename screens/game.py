@@ -93,35 +93,30 @@ class Game:
                     pos = pos[0], 7
                 
                 # Determines whether piece is moving or selecting a different piece
-                move_piece = False 
-                en_passant = False
-                left_castle = False
-                right_castle = False
+                move = Move.NONE
                 if self.piece_selected:
                     move = self.board.move_type(pos)
-                    move_piece = True if move != Move.NONE else False
-                    en_passant = True if move == Move.EN_PASSANT else False
-                    left_castle = True if move == Move.LEFT_CASTLE else False
-                    right_castle = True if move == Move.RIGHT_CASTLE else False
-
-                castle = True if left_castle or right_castle else False
-                    # if self.board.is_move(pos) != Move.NONE:
-                    #     move_piece = True
-                    
 
                 # Moves the piece selected
-                if move_piece:
+                if move != Move.NONE:
                     self.moves = None
-                    self.board.move_piece(pos, self.previous_pos)
-                    if castle:
+                    self.board.move_piece(pos, self.previous_pos, move)
+                    if move == Move.RIGHT_CASTLE or move == Move.LEFT_CASTLE:
                         rank = pos[1]
-                        if left_castle:
+                        if move == Move.LEFT_CASTLE:
                             rook_pos = (FIRST, rank)
                             new_pos = (FIRST + 3, rank)
-                        if right_castle:
+                        if move == Move.RIGHT_CASTLE:
                             rook_pos = (LAST, rank)
                             new_pos = (LAST - 2, rank)
-                        self.board.move_piece(new_pos, rook_pos)
+                        self.board.move_piece(new_pos, rook_pos, move)
+                    
+                    if move == Move.EN_PASSANT:
+                        if self.board.players_turn == Team.WHITE:
+                            new_pos = (pos[0] + 1, pos[1])
+                            self.board.remove_piece((pos[0], pos[1] + 1))
+                        if self.board.players_turn == Team.BLACK:
+                            self.board.remove_piece((pos[0], pos[1] - 1))
 
 
                     self.board.players_turn = Team.BLACK if self.board.players_turn == Team.WHITE else Team.WHITE
