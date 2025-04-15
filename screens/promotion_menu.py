@@ -1,12 +1,7 @@
 import sys
 import pygame
 
-from pieces.piece import PNGS, Type, Team
-
-SCREEN_SIZE = 640, 640
-SQUARE_SIZE = 80
-OUTLINE_SIZE = 8
-OUTLINE_SQUARE_SIZE = SQUARE_SIZE + OUTLINE_SIZE
+from logic.constants import SCREEN_SIZE, SQUARE_SIZE, OUTLINE_SIZE, OUTLINE_SQUARE_SIZE, PNGS, Type, Team, LIGHT_BROWN
 
 
 # Class for piece select menu
@@ -56,8 +51,8 @@ class Promotion_Menu:
 
         # Displays the menu
         for i in range(4):
-            pygame.draw.rect(self.screen, 'red', self.outline_squares[i])
-            pygame.draw.rect(self.screen, 'green', self.selection_squares[i])
+            pygame.draw.rect(self.screen, 'black', self.outline_squares[i])
+            pygame.draw.rect(self.screen, LIGHT_BROWN, self.selection_squares[i])
             display.blit(self.textures[i], self.locations[i])
         
         self.screen.blit(display, display.get_rect())

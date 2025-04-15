@@ -1,5 +1,5 @@
-from pieces.piece import Piece, Team, Type, Move, FIRST, LAST
-
+from pieces.piece import Piece
+from logic.constants import Team, Type, Move, FIRST, LAST
 
 # Pawn piece
 class Pawn(Piece):

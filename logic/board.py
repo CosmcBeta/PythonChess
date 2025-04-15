@@ -1,12 +1,12 @@
 import pygame
 from copy import deepcopy
 
-from pieces.piece import Team, Type, Move, LAST, FIRST, SQUARE_SIZE
 from pieces.king import King
 from pieces.knight import Knight
 from pieces.pawn import Pawn
 from pieces.sliding_piece import Sliding
 from logic.history import History
+from logic.constants import SCREEN_SIZE, SQUARE_SIZE, GRAY, Team, Type, Move, FIRST, LAST
 
 """
     Board indexes
@@ -19,13 +19,6 @@ from logic.history import History
     (0,6), (1,6), (2,6), (3,6), (4,6), (5,6), (6,6), (7,6)
     (0,7), (1,7), (2,7), (3,7), (4,7), (5,7), (6,7), (7,7)
 """
-
-
-# Size of the screen
-SCREEN_SIZE = 640, 640
-
-# Colors
-GRAY = 140, 140, 140, 160
 
 
 # Main class for the chess board

@@ -4,16 +4,7 @@ import pygame
 from screens.pause import Pause
 from screens.promotion_menu import Promotion_Menu
 from logic.board import Board
-from pieces.piece import Team, Move, FIRST, LAST
-
-# Constants
-SQUARE_SIZE = 80
-
-LIGHT_BROWN = 236, 236, 208, 255
-DARK_BROWN = 181, 136, 95, 255
-# redHighlight(243, 60, 66, 255),
-# 	yellowHighlight(246, 246, 129, 255),
-# 	textHighlight(143, 107, 74, 255),
+from logic.constants import SQUARE_SIZE, LIGHT_BROWN, DARK_BROWN, Team, Move, FIRST, LAST
 
 
 """

@@ -1,48 +1,7 @@
 from abc import ABC, abstractmethod
-from enum import Enum
 import pygame
 
-
-# Team
-class Team(Enum):
-    WHITE = 0
-    BLACK = 1
-
-
-# Piece Type
-class Type(Enum):
-    PAWN = 0
-    KNIGHT = 1
-    BISHOP = 2
-    ROOK = 3
-    QUEEN = 4
-    KING = 5
-
-
-class Move(Enum):
-    NONE = 0    
-    NORMAL = 1
-    LEFT_CASTLE = 2
-    RIGHT_CASTLE = 3
-    EN_PASSANT = 4
-    PAWN_DOUBLE = 5
-
-
-# Constants
-SQUARE_SIZE = 80
-FIRST = 0
-LAST = 7
-
-# Images for pieces
-PNGS = {
-    Type.PAWN: ["assets/white_pawn.png", "assets/black_pawn.png"],
-    Type.KNIGHT: ["assets/white_knight.png", "assets/black_knight.png"],
-    Type.BISHOP: ["assets/white_bishop.png", "assets/black_bishop.png"],
-    Type.ROOK: ["assets/white_rook.png", "assets/black_rook.png"],
-    Type.QUEEN: ["assets/white_queen.png", "assets/black_queen.png"],
-    Type.KING: ["assets/white_king.png", "assets/black_king.png"]
-}
-
+from logic.constants import Team, Type, Move, SQUARE_SIZE, PNGS
 
 # Abstract Class for a piece
 class Piece(ABC):
