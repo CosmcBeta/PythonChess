@@ -1,7 +1,7 @@
 import pygame
 from copy import deepcopy
 
-from pieces.piece import Team, Type, Move, LAST, SQUARE_SIZE
+from pieces.piece import Team, Type, Move, LAST, FIRST, SQUARE_SIZE
 from pieces.king import King
 from pieces.knight import Knight
 from pieces.pawn import Pawn
@@ -34,6 +34,7 @@ class Board:
     def __init__(self) -> None:
         self.fen_to_board()#"r2qk2r/8/8/8/8/8/8/R2QK2R w KQkq - 0 1") #"r1bk3r/p2pBpNp/n4n2/1p1NP2P/6P1/3P4/P1P1K3/q5b1")
         self.histroy = History()
+        #self.piece_select = Piece_Select()
 
     # Creates board from the first arg of a FEN string
     def create_board(self, board: str) -> None:
@@ -108,7 +109,7 @@ class Board:
         self.players_turn = Team.BLACK if turn == 'b' else Team.WHITE
 
         # Castling
-        # WIP
+        # WIP ( Dont need)
         self.can_castle = [False for _ in range(4)]
         if castle is None:
             self.can_castle = [True for _ in range(4)]
@@ -126,7 +127,7 @@ class Board:
                     self.can_castle[3] = True # Black left
 
         # En Passant
-        # WIP
+        # WIP (dont need)
         if en_passant is None or en_passant == '-':
             self.en_passant_square = None
         else:
@@ -195,6 +196,16 @@ class Board:
 
         return self.moves[rank][file]
     
+    # Returns if the piece is a pawn promotion
+    def pawn_promotion(self, pos: tuple):
+        rank = pos[1]
+        file = pos[0]
+
+        piece = self.board[rank][file]
+
+        return piece.type == Type.PAWN and (rank == FIRST or rank == LAST)
+
+    
     # Moves a piece to new location
     def move_piece(self, new_pos: tuple, previous_pos: tuple, move: Move) -> None:
         self.histroy.add_board(deepcopy(self.board), move)
@@ -220,8 +231,26 @@ class Board:
         if self.players_turn == Team.BLACK:
             self.full_move += 1
 
+    # Removes a piece from the board
     def remove_piece(self, pos: tuple) -> None:
         rank = pos[1]
         file = pos[0]
 
         self.board[rank][file] = None
+
+    # Sets a piece on the board at current location for team and type
+    def set_piece(self, pos: tuple, type: Type, team: Team):
+        rank = pos[1]
+        file = pos[0]
+
+        # Determines what piece is needed
+        if type == Type.KNIGHT:
+            piece = Knight(team, type, pos)
+        elif type == Type.KING:
+            piece = King(team, type, pos)
+        elif type == Type.PAWN:
+            piece = Pawn(team, type, pos)
+        else:
+            piece = Sliding(team, type, pos)
+
+        self.board[rank][file] = piece

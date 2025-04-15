@@ -34,6 +34,8 @@ def main():
         while not game.game_over:
             if game.pause:
                 game.pause_obj.update()
+            elif game.promotion_menu:
+                game.promotion_menu_obj.update()
             else:
                 game.update()
             

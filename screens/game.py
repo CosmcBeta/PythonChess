@@ -2,6 +2,7 @@ import sys
 import pygame
 
 from screens.pause import Pause
+from screens.promotion_menu import Promotion_Menu
 from logic.board import Board
 from pieces.piece import Team, Move, FIRST, LAST
 
@@ -32,8 +33,11 @@ class Game:
         self.moves = None
         self.piece_selected = False
         self.previous_pos = (0, 0)
+        self.pawn_pos = (0, 0)
         self.pause_obj = Pause(screen, self)
         self.board = Board()
+        self.promotion_menu_obj = Promotion_Menu(screen, self)
+        self.promotion_menu = False
         #self.players_turn = self.board.players_turn
         self.create_background_board()
 
@@ -101,22 +105,31 @@ class Game:
                 if move != Move.NONE:
                     self.moves = None
                     self.board.move_piece(pos, self.previous_pos, move)
+
+                    # For castling
                     if move == Move.RIGHT_CASTLE or move == Move.LEFT_CASTLE:
                         rank = pos[1]
                         if move == Move.LEFT_CASTLE:
                             rook_pos = (FIRST, rank)
                             new_pos = (FIRST + 3, rank)
+
                         if move == Move.RIGHT_CASTLE:
                             rook_pos = (LAST, rank)
                             new_pos = (LAST - 2, rank)
+
                         self.board.move_piece(new_pos, rook_pos, move)
                     
+                    # For en passant
                     if move == Move.EN_PASSANT:
                         if self.board.players_turn == Team.WHITE:
                             self.board.remove_piece((pos[0], pos[1] + 1))
                         elif self.board.players_turn == Team.BLACK:
                             self.board.remove_piece((pos[0], pos[1] - 1))
 
+                    # Checks for pawn promotion
+                    if self.board.pawn_promotion(pos):
+                        self.pawn_pos = pos
+                        self.promotion_menu = True
 
                     self.board.players_turn = Team.BLACK if self.board.players_turn == Team.WHITE else Team.WHITE
                 else: # Selects next pieces moves

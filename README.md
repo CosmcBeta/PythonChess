@@ -2,7 +2,7 @@
 A 2 player game of chess created with python and pygame
 
 ## Need to do:
-- Add pawn promotion
+- Create methods for en passant and castling (only for FEN sring)
 - Create endings
 - Check/Checkmate
 - Create moves for when in check
